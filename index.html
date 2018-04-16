@@ -1,23 +1,78 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Vue -->
+    <script src="libs\Vue.js"></script>
+    <!-- main -->
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="main.js"></script>
     <!-- KaTeX -->
     <link rel="stylesheet" href="libs/katex/katex.min.css">
-    <script src="libs/katex/katex.min.js" ></script>
-
+    <script src="libs/katex/katex.min.js"></script>
 </head>
-<body>
-    <script>
-    var html = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}");
-    document.write(html);
-    </script>
-    
 
+<body>
+    <p>
+        Вариант 2
+    </p>
+    <script>
+        let html = katex.renderToString(`
+    \\begin{matrix}
+    F = -x_1 + 5x_2  \\\\
+    F \\to max \\\\
+    \\\\
+    -x_1 + x_2 \\le 2 \\\\
+    5x_1 + 2x_2 \\ge 10 \\\\
+    \\\\
+    x_1 \\ge 0, x_2 \\ge 0
+    \\end{matrix}
+
+    \\implies
+
+    \\begin{matrix}
+    \\begin{cases}
+    F + x_1 - 5x_2 = 0  \\\\
+    -x_1 + x_2 + x_3 = 2 \\\\
+    5x_1 +2x_2 -x_4 = 10
+    \\end{cases} \\\\ 
+    \\\\
+    x_1 \\ge 0, x_2 \\ge 0, x_3 \\ge 0, x_4 \\ge 0
+    \\end{matrix}`);
+        document.write(html);
+    </script>
+    <br>
+    <!-- simplexApp -->
+    <div id='simplexApp'>
+        <div v-for='(step, step_id) in steps'>
+            <p>Шаг №{{ step_id + 1 }} - {{ step.name_action }}</p>
+            <table>
+                <tr class='line'>
+                    <td>Базис</td>
+                    <td>H</td>
+                    <td>x<sub>1</sub></td>
+                    <td>x<sub>2</sub></td>
+                    <td>x<sub>3</sub></td>
+                    <td>x<sub>4</sub></td>
+                    <td>b</td>
+                </tr>
+                <tr v-for="(row, row_id) in step">
+                    <td v-for="(cell, cell_id) in row" v-bind:class="{
+                        //highlight: highlighted_cell(step_id, row_id, cell_id),
+                        //highlight_row: highlighted_row(step_id, row_id, cell_id),
+                        //highlight_col: highlighted_row(step_id, row_id, cell_id),
+                    }">
+                        <span v-if="row_id != step.length-1 && cell_id == 0">x</span>{{ cell }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- main -->
+    <script src="main.js"></script>
 </body>
+
 </html>

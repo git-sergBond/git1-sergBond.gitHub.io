@@ -1,0 +1,21 @@
+
+tr.line td{
+    padding: 7px;
+    border-top: 1px solid steelblue;
+    border-bottom: 1px solid steelblue; 
+}
+table{
+    border-collapse: separate;
+    border-spacing:  0px 0px;
+    text-align: center;
+}
+.highlight{
+    background-color: seagreen;
+    color: white;
+    border-radius: 50%;
+}
+.highlight_col{
+    background-color: steelblue;
+    color: white;
+    border-radius: 10%; 
+}
