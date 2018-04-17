@@ -27,7 +27,9 @@ var simplexApp = new Vue({
         //хранит шаги перехода от одной симплекс таблице к другой
         steps: function() {
             let steps = [];
+
             const BAZIS = 0, H = 1, B = 6, X = 2;//столбцы матрицы
+
             let first_matrix = [
             //                     s1  s2 - в другой литре
             //  базиc, H   x1  x2  x3  x4  B
@@ -81,6 +83,7 @@ var simplexApp = new Vue({
             let resolving_el = { row: 0, col: 0 }; //разрешающий элемент
             for(let i = 0; i < tmp.length; i++)
                 if(tmp[i][B] == min) resolving_el.row = i;
+
             resolving_el.col = selected_col - X; //преебразуем jстолбец (X1)  в данные удобные для прользователя
             tmp[resolving_el.row][BAZIS] = resolving_el.col; 
             steps.push(tmp);
@@ -95,6 +98,7 @@ var simplexApp = new Vue({
             Остальные элементы таблицы пересчитываем по правилу прямоугольника.';
             tmp[resolving_el.row][resolving_el.col + 1] = 1;
             steps.push(tmp);
+
             return steps;
         }
     }
