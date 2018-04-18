@@ -1,8 +1,30 @@
 
-tr.line td{
-    padding: 7px;
+
+/* ПОЗИЦИОНИРОВАНИЕ И ТЕКСТ */
+.center{
+    text-align: center
+}
+.main-header{
+    margin: auto;
     border-top: 1px solid steelblue;
     border-bottom: 1px solid steelblue; 
+    padding: 5px 3px;
+    max-width: 100px;
+}
+.main-header p{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* МАТРИЦА И ПОДСВЕТКА ЭЛЕМЕНТОВ */
+tr.line td, .main-header{
+    border-top: 1px solid steelblue;
+    border-bottom: 1px solid steelblue; 
+}
+tr td{
+    padding: 7px 7px;
 }
 table{
     border-collapse: separate;
@@ -18,4 +40,70 @@ table{
     background-color: steelblue;
     color: white;
     border-radius: 10%; 
+}
+
+
+/* ФЛЕКСЫ */
+.flex-container-row{
+    display: flex;
+}
+.flex-coll{
+    flex: initial;
+}
+.flex-center{
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* ПАНЕЛЬ ПЕРЕЛИСТОВАНИЯ С КРУЖКАМИ */
+.container-switch{
+    border: 1px solid steelblue;
+    border-radius: 20px;
+}
+.btn-switch{
+    flex: initial;
+    background-color: white;
+    border-radius: 50%; 
+    border: solid 1px slategray; 
+    padding: 5px;
+    width: 5px;
+    height: 5px;
+    margin: 5px
+} 
+.btn-switch.enable{
+    background-color: #20c45f;
+    border: 0px;
+}
+.flex-container-row .flex-coll{
+    padding: 5px;
+    margin: 10px;
+}
+
+
+
+/* КОНТЕЙНЕР С ИНФОЙ И ЗАГОЛОВОМ */
+.container-info{
+    position:relative;
+    max-width: 460px;
+    border: 1px solid steelblue;
+    padding: 0;
+}
+.container-info .header{
+    position:absolute;
+    justify-content: left;
+    border: 1px solid steelblue;
+    padding: 0;
+    margin: 0;
+}
+.container-info .header p{
+    padding: 0;
+    margin: 3px;
+}
+.container-info .info
+{
+    margin-top: 50px;
+    text-align: justify;
+    margin-left: 10px;
+    margin-right: 10px;
 }
