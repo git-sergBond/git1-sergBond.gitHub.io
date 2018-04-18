@@ -2,33 +2,37 @@ var simplexApp = new Vue({
     el: '#simplexApp',
     data: {
         highlights: {
-            //!!!!!!!!!!!!!! ДОБАВИТЬ КРУЖКИ ПЕРЕХОДА ПО ШАГАМ
-            //step        v-if  steps[].helight == true
-            /*
-            this.highlights.push({
-                row: last_row,
-                col: selected_col,
-                step: steps.length
-            })*/
-            cell: [],
-            row: [],
-            col: []
+            //в каждой ячейке ассоциатив массива(индекс - шаг) содержится highlight_info
         },
         state_matr: 0
     },
     methods: {
-
-        highlighted_cell: function (step_id, row_id, col_id) {
-            //return step_id > 0 && this.highlights[step_id - 1].row === row_id && this.highlights[step_id - 1].col === col_id
-            return this.highlights.some((element) => {
-                if (element.row === row_id && element.col === col_id && element.step === step_id) return true;
-            }) && true;
+        highlight_info: function (type_light, row, col) {
+            //класс информации о подсветке
+            this.row = row;
+            this.col = col;
+            this.type_light = type_light;// 'cell' or 'row' or 'col'
         },
-        highlighted_row: function (step_id, row_id, col_id) {
-            return step_id > 0 && this.highlights[step_id - 1].row === row_id
+        NEW_highlight_in_step: function (n_step) {
+            this.highlights[n_step] = [];
         },
-        highlighted_col: function (step_id, row_id, col_id) {
-            return step_id > 0 && this.highlights[step_id - 1].col === col_id
+        PUSH_highlight_in_step: function (n_step, type_light, row_id, col_id){
+            this.highlights[n_step].push(new this.highlight_info(type_light, row_id, col_id));
+        },
+        highlighted: function (step_id, type_light, row_id, col_id) {
+            // включение подсветки элемента
+            let is_light = this.highlights[step_id];
+            if (is_light instanceof Array) {
+                return is_light.some(e => {
+                    if (e.type_light == type_light) {
+                        if ((type_light == 'cell' && e.col == col_id && e.row == row_id)
+                        ||(type_light == 'col' && e.col == col_id)
+                        ||(type_light == 'row' && e.row == row_id)
+                    ) return true;
+                    }
+                });
+            }
+            return false;
         }
     },
     computed: {
@@ -45,11 +49,11 @@ var simplexApp = new Vue({
             ];
             resolving_el= { row: 0, col: 0, val: 0 } // разрешающий элемент
             let tmp;//временная матрица для произведения вычислений
-            //
+            // 1
             tmp = copyMatr(first_matrix);
             tmp.name_action = 'скопировал начальные данные, для вывода исходных данных';
             steps.push(tmp);
-            // 
+            // 2
             tmp = copyMatr(first_matrix);
             tmp.name_action = 'Выбираем в последней строке наибольшее (по модулю) отрицательное число ';
             let last_row = tmp.length - 1;
@@ -59,16 +63,20 @@ var simplexApp = new Vue({
                 return min;
             }, min);
             resolving_el.col = tmp[last_row].indexOf(min);
-            
+            this.NEW_highlight_in_step(steps.length);
+            this.PUSH_highlight_in_step(steps.length,'cell', last_row, resolving_el.col);
             steps.push(tmp);
-            //
+            // 3
             tmp = copyMatr(tmp);
             tmp.name_action = 'Вычислим b = Н / Элементы_выбранного_столбца';
             for (let i = 0; i < tmp.length; i++)
                 if (typeof tmp[i][B] == 'number')
                     tmp[i][B] = tmp[i][H] / tmp[i][resolving_el.col];
+            this.NEW_highlight_in_step(steps.length);
+            this.PUSH_highlight_in_step(steps.length,'col', last_row, resolving_el.col);
+            this.PUSH_highlight_in_step(steps.length,'col', last_row, B);
             steps.push(tmp);
-            //
+            // 4
             tmp = copyMatr(tmp);
             tmp.name_action = 'Среди вычисленных значений b выбираем наименьшее. \
             Пересечение выбранных столбца и строки даст нам разрешающий элемент.';
@@ -76,16 +84,20 @@ var simplexApp = new Vue({
             for (let i = 0; i < tmp.length; i++)
                 if (typeof tmp[i][B] == 'number')
                     if (tmp[i][B] < min) min = tmp[i][B];
-            steps.push(tmp);
-            //
-            tmp = copyMatr(tmp);
-            tmp.name_action = 'Меняем базис на переменную соответствующую разрешающему элементу ';
             for (let i = 0; i < tmp.length; i++)
                 if (tmp[i][B] == min)
                     resolving_el.row = i;
-            tmp[resolving_el.row][BAZIS] = resolving_el.col-1; //преебразуем jстолбец (X1)  в данные удобные для прользователя
+            this.NEW_highlight_in_step(steps.length);
+            this.PUSH_highlight_in_step(steps.length,'cell', resolving_el.row, B);
             steps.push(tmp);
-            //
+            // 5
+            tmp = copyMatr(tmp);
+            tmp.name_action = 'Меняем базис на переменную соответствующую разрешающему элементу ';
+            tmp[resolving_el.row][BAZIS] = resolving_el.col-1; //преебразуем jстолбец (X1)  в данные удобные для прользователя
+            this.NEW_highlight_in_step(steps.length);
+            this.PUSH_highlight_in_step(steps.length,'cell', resolving_el.row, BAZIS);
+            steps.push(tmp);
+            // 6
             tmp = copyMatr(tmp);
             tmp.name_action = 'Теперь необходимо пересчитать все элементы симплекс-таблицы, кроме столбца b. \
             Вот как это можно сделать: \
@@ -95,8 +107,9 @@ var simplexApp = new Vue({
             (3)Для элементов разрешающего столбца – они просто обнуляются. \
             (4)Остальные элементы таблицы пересчитываем по правилу прямоугольника.';
             resolving_el.val = tmp[resolving_el.row][resolving_el.col]; //записываем значение разреш элемента
-            
             tmp[resolving_el.row][resolving_el.col] = 1;//(1)
+            this.NEW_highlight_in_step(steps.length);
+            this.PUSH_highlight_in_step(steps.length,'cell', resolving_el.row, resolving_el.col);
             tmp[resolving_el.row] = tmp[resolving_el.row].map((element, index) => {
                 if (index >= X && index != resolving_el.col && index != tmp[0].length-1) return element / resolving_el.val;
                 return element;

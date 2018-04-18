@@ -32,14 +32,18 @@ table{
     text-align: center;
 }
 .highlight{
-    background-color: seagreen;
-    color: white;
-    border-radius: 50%;
+    border-collapse: 5px;
+    padding: 0px;
+    margin: 5px;
+    border: 1px solid seagreen;
+    border-radius: 10px; 
 }
 .highlight_col{
-    background-color: steelblue;
-    color: white;
-    border-radius: 10%; 
+    border-collapse: 5px;
+    padding: 0px;
+    margin: 5px;
+    border: 1px solid seagreen;
+    border-radius: 10px; 
 }
 
 
